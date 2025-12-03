@@ -1,6 +1,10 @@
 #include "MotorController.h"
 #include <Wire.h>
 
+# define GPIO 0x09
+# define DELAY 2
+
+
 MotorController::MotorController(int sda, int scl, const MotorConfig* motors, int nMotors) {
   _sda = sda;
   _scl = scl;
@@ -49,8 +53,8 @@ void MotorController::step(int addr, int shift, int steps) {
     0b0011,
     0b1001
   };
-
-  Wire.beginTransmission(addr);
+  
+  // Wire.begin(_sda, _scl);
   int absSteps = abs(steps);
   
   for(int s = 0; s < absSteps; s++) {
@@ -61,7 +65,11 @@ void MotorController::step(int addr, int shift, int steps) {
         if(shift) {
           val = val << 4;
         }
+        delay(DELAY);
+        Wire.beginTransmission(addr);
+        Wire.write(GPIO);
         Wire.write(val);
+        Wire.endTransmission();
       }
     } else {
       // Counter-Clockwise
@@ -70,11 +78,15 @@ void MotorController::step(int addr, int shift, int steps) {
         if(shift) {
           val = val << 4;
         }
+
+        delay(DELAY);
+        Wire.beginTransmission(addr);
+        Wire.write(GPIO);
         Wire.write(val);
+        Wire.endTransmission();
       }
     }
   }
-  Wire.endTransmission();
 }
 
 void MotorController::moveStepper(int motorIndex, int steps) {

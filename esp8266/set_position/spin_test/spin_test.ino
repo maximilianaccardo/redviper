@@ -8,7 +8,7 @@
 //   {0x21, 1}
 // };
 
-// MotorController m67(0, 1, configs, 4);
+// MotorController m67(D2, D1, configs, 4);
 
 void setup() {
   // m67.setup();
